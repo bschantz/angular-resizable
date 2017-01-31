@@ -43,6 +43,8 @@ angular.module('angularResizable', [])
                 var style = window.getComputedStyle(element[0], null),
                     w,
                     h,
+					l,
+					t,
                     dir = scope.rDirections || ['right'],
                     vx = scope.rCenteredX ? 2 : 1, // if centered double velocity
                     vy = scope.rCenteredY ? 2 : 1, // if centered double velocity
@@ -86,8 +88,16 @@ angular.module('angularResizable', [])
                             element[0].style[prop] = w - (offset * vx) + 'px';
                             break;
                         case 'left':
-                            prop = scope.rFlex ? flexBasis : 'width';
-                            element[0].style[prop] = w + (offset * vx) + 'px';
+							if (element[0].style['position'] == 'absolute') {
+								prop = scope.rFlex ? flexBasis : 'width';
+								element[0].style[prop] = w + (offset * vx) + 'px';
+								if (!scope.rFlex) {
+									element[0].style['left'] = l - (offset * vx) + 'px';
+								}
+							} else {
+								prop = scope.rFlex ? flexBasis : 'width';
+								element[0].style[prop] = w + (offset * vx) + 'px';
+							}
                             break;
                     }
                     updateInfo(e);
@@ -116,6 +126,8 @@ angular.module('angularResizable', [])
                     start = axis === 'x' ? getClientX(e) : getClientY(e);
                     w = parseInt(style.getPropertyValue('width'));
                     h = parseInt(style.getPropertyValue('height'));
+                    l = parseInt(style.getPropertyValue('left'));
+                    t = parseInt(style.getPropertyValue('top'));
 
                     //prevent transition while dragging
                     element.addClass('no-transition');
